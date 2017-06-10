@@ -38,5 +38,7 @@
                 app:tabSelectedTextColor="@android:color/background_light"
                 app:tabTextColor="@android:color/background_light"/>
         </android.support.design.widget.AppBarLayout>
+
+        <android.support.design.widget.FloatingActionButton
     </android.support.design.widget.CoordinatorLayout>
 </FrameLayout>
