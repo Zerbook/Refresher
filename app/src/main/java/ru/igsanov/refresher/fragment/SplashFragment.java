@@ -43,7 +43,7 @@ public class SplashFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "здесь окошко");
             try {
-                TimeUnit.SECONDS.sleep(15);
+                TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

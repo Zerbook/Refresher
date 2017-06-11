@@ -1,7 +1,9 @@
 package ru.igsanov.refresher;
 
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import ru.igsanov.refresher.adapter.TabAdapter;
+import ru.igsanov.refresher.dialog.AddingTaskDilogFragment;
 import ru.igsanov.refresher.fragment.SplashFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddingTaskDilogFragment.AddingTaskListener {
     private static final String TAG = "myLogs";
     FragmentManager fragmentManager;
     PreferenceHelper preferenseHelper;
@@ -98,5 +102,23 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment addingTaskDialogFragment = new AddingTaskDilogFragment();
+                addingTaskDialogFragment.show(fragmentManager, "AddingTaskDialogFragment");
+            }
+        });
+    }
+
+    @Override
+    public void onTaskAdded() {
+        Toast.makeText(this, "Task added.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onTaskAddingCancel() {
+        Toast.makeText(this, "Task adding cancel.", Toast.LENGTH_LONG).show();
     }
 }
