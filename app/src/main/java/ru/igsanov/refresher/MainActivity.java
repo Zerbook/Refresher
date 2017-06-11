@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +16,19 @@ import android.widget.Toast;
 
 import ru.igsanov.refresher.adapter.TabAdapter;
 import ru.igsanov.refresher.dialog.AddingTaskDilogFragment;
+import ru.igsanov.refresher.fragment.CurrentTaskFragment;
+import ru.igsanov.refresher.fragment.DoneTaskFragment;
 import ru.igsanov.refresher.fragment.SplashFragment;
+import ru.igsanov.refresher.model.ModelTask;
 
 public class MainActivity extends AppCompatActivity implements AddingTaskDilogFragment.AddingTaskListener {
     private static final String TAG = "myLogs";
     FragmentManager fragmentManager;
     PreferenceHelper preferenseHelper;
+    TabAdapter tabAdapter;
+    CurrentTaskFragment currentTaskFragment;
+    DoneTaskFragment doneTaskFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,10 +37,11 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
         PreferenceHelper.getInstance().init(getApplication());
         preferenseHelper = PreferenceHelper.getInstance();
 
-
+        Log.d(TAG, "main activituy");
         runSplash();
 
         setUI();
+
     }
 
     @Override
@@ -81,12 +90,14 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.current_task));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.done_task));
+
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabAdapter tabAdapter = new TabAdapter(fragmentManager, 2);
+        tabAdapter = new TabAdapter(fragmentManager, 2);
+
         viewPager.setAdapter(tabAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {     //addOnTabSelectedListener   setOnTabSelectedListener
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -102,7 +113,13 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
 
             }
         });
+
+        currentTaskFragment = (CurrentTaskFragment) tabAdapter.getItem(TabAdapter.CURRENT_TASK_FRAGMENT_POSITION);
+
+        doneTaskFragment = (DoneTaskFragment) tabAdapter.getItem(TabAdapter.DONE_TASK_FRAGMENT_POSITION);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,8 +130,9 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
     }
 
     @Override
-    public void onTaskAdded() {
-        Toast.makeText(this, "Task added.", Toast.LENGTH_LONG).show();
+    public void onTaskAdded(ModelTask newTask) {
+        Log.d(TAG, "Added");
+        currentTaskFragment.addTask(newTask);
     }
 
     @Override
