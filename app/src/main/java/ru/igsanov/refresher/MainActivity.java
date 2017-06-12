@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import ru.igsanov.refresher.adapter.TabAdapter;
+import ru.igsanov.refresher.datebase.DBHelper;
 import ru.igsanov.refresher.dialog.AddingTaskDilogFragment;
 import ru.igsanov.refresher.fragment.CurrentTaskFragment;
 import ru.igsanov.refresher.fragment.DoneTaskFragment;
@@ -29,14 +30,19 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
     CurrentTaskFragment currentTaskFragment;
     DoneTaskFragment doneTaskFragment;
 
+    public DBHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragmentManager = getFragmentManager();
+
         PreferenceHelper.getInstance().init(getApplication());
         preferenseHelper = PreferenceHelper.getInstance();
 
+        dbHelper = new DBHelper(getApplicationContext());
+
+        fragmentManager = getFragmentManager();
         Log.d(TAG, "main activituy");
         runSplash();
 
@@ -64,14 +70,15 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
         if (id == R.id.action_splash) {
             //Log.d(TAG, "я здесь");
             item.setChecked(!item.isChecked()); //(item.isChecked());
-            preferenseHelper.putBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE,item.isChecked());
+            preferenseHelper.putBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE, item.isChecked());
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-    public  void runSplash(){
-        if(!preferenseHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
+
+    public void runSplash() {
+        if (!preferenseHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
             SplashFragment splashFragment = new SplashFragment();
 
             fragmentManager.beginTransaction()
@@ -81,9 +88,10 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
         }
 
     }
-    private void setUI(){
+
+    private void setUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if(toolbar != null){
+        if (toolbar != null) {
             toolbar.setTitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(toolbar);
         }
@@ -132,11 +140,17 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDilogFr
     @Override
     public void onTaskAdded(ModelTask newTask) {
         Log.d(TAG, "Added");
-        currentTaskFragment.addTask(newTask);
+        currentTaskFragment.addTask(newTask,true);
     }
 
     @Override
     public void onTaskAddingCancel() {
         Toast.makeText(this, "Task adding cancel.", Toast.LENGTH_LONG).show();
     }
+    //@Override
+    //public void onTaskDone(Model task) { doneTaskFragment.addTask(task)}
+
+    //@Override
+    //public void onTaskRestore(Model task) {
+    // currentTaskFragment.addTask(task, false)  }
 }
